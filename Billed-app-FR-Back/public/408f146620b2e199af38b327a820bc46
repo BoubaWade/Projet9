@@ -1,0 +1,6 @@
+Résolution de Bugs dans le P9
+
+Bug n1 : trier les date de façon décroissante. J'ai rajouter la méthode sort() dans le fichier BillsUI.js à la ligne 25.
+
+Bug n2 : la connection en tant que Admin à été résolue au niveau de la foncion handleSubmitAdmin en remplaçant input[data-testid="employee-email-input"] par input[data-testid="admin-email-input"]  
+et input[data-testid="employee-password-input"] par input[data-testid="admin-password-input"].
