@@ -3,6 +3,7 @@ import ErrorPage from "./ErrorPage.js";
 import LoadingPage from "./LoadingPage.js";
 
 import Actions from "./Actions.js";
+import { formatDate } from "../app/format.js";
 
 const row = (bill) => {
   return `
@@ -20,9 +21,8 @@ const row = (bill) => {
 };
 // --------------------------RESOLUTION BUG N1( TRI DES DATE DE FACON DECROISSANTE)---------------------------
 const rows = (data) => {
-  const dataSorted = data.sort((a, b) => (a < b ? 1 : -1));
-  return dataSorted && dataSorted.length
-    ? dataSorted
+  return data && data.length
+    ? data
         .sort((a, b) => {
           return new Date(b.date) - new Date(a.date);
         })
