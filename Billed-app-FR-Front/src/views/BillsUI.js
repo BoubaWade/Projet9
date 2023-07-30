@@ -20,8 +20,9 @@ const row = (bill) => {
 };
 // --------------------------RESOLUTION BUG N1( TRI DES DATE DE FACON DECROISSANTE)---------------------------
 const rows = (data) => {
-  return data && data.length
-    ? data
+  const dataSorted = data.sort((a, b) => (a < b ? 1 : -1));
+  return dataSorted && dataSorted.length
+    ? dataSorted
         .sort((a, b) => {
           return new Date(b.date) - new Date(a.date);
         })
