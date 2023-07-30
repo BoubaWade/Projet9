@@ -23,6 +23,7 @@ export default class NewBill {
       .files[0];
     const filePath = e.target.value.split("/\\/g");
     const fileName = filePath[filePath.length - 1];
+    // --------------------------RESOLUTION BUG N3-------------------
     //----J'ai ajouté cette fonction fileValidation pour n'accepter que les images en (jpeg, jpg, png, gif)
     function fileValidation(file) {
       const fileTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];

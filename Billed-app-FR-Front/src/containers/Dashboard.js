@@ -148,7 +148,7 @@ export default class {
         cards(filteredBills(bills, getStatus(this.index)))
       );
       this.counter++;
-      // --------BUG RESOLU EN RAJOUTANT CE BOUT DE CODE----------
+      // --------BUG4 RESOLU EN RAJOUTANT CE BOUT DE CODE----------
       filteredBills(bills, getStatus(this.index)).forEach((bill) => {
         $(`#open-bill${bill.id}`).click((e) =>
           this.handleEditTicket(e, bill, bills)

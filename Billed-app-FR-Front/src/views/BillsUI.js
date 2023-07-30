@@ -19,7 +19,7 @@ const row = (bill) => {
     </tr>
     `;
 };
-// --------------------------RESOLUTION BUG N1( TRI DES DATE DE FACON DECROISSANTE)---------------------------
+// --------------------------RESOLUTION BUG N1--------------------------------
 const rows = (data) => {
   return data && data.length
     ? data
