@@ -122,7 +122,14 @@ describe("Given I am connected as an employee", () => {
 // test d'intégration GET bills
 describe("Given I am a user connected as Employee", () => {
   describe("When I navigate on Bills Page", () => {
-    test("Then, it should them in the page", async () => {
+    test("if API fails with 404 message error", async () => {
+      jest.spyOn(mockStore, "bills").mockImplementationOnce(() => {
+        return {
+          list: () => {
+            return Promise.reject(new Error("Erreur 404"));
+          },
+        };
+      });
       localStorage.setItem(
         "user",
         JSON.stringify({ type: "Employee", email: "a@a" })
@@ -132,61 +139,96 @@ describe("Given I am a user connected as Employee", () => {
       document.body.append(root);
       router();
       window.onNavigate(ROUTES_PATH.Bills);
-
-      await waitFor(() => screen.getByText("Mes notes de frais"));
-      expect(screen.getByText("Mes notes de frais")).toBeTruthy();
-      const buttonNewBill = screen.getByTestId("btn-new-bill");
-      expect(buttonNewBill).toBeTruthy();
+      await new Promise(process.nextTick);
+      const message = await screen.getByText(/Erreur 404/);
+      expect(message).toBeTruthy();
     });
-
-    describe("When fetches bills list is successul ", () => {
-      beforeEach(() => {
-        jest.spyOn(mockStore, "bills");
-        Object.defineProperty(window, "localStorage", {
-          value: localStorageMock,
-        });
-        window.localStorage.setItem(
-          "user",
-          JSON.stringify({
-            type: "Employee",
-            email: "a@a",
-          })
-        );
-        const root = document.createElement("div");
-        root.setAttribute("id", "root");
-        document.body.appendChild(root);
-        router();
+    test("if API fails with 505 message error", async () => {
+      jest.spyOn(mockStore, "bills").mockImplementationOnce(() => {
+        return {
+          list: () => {
+            return Promise.reject(new Error("Erreur 505"));
+          },
+        };
       });
-      test("Then, bills have an Properties", async () => {
-        mockStore.bills.mockImplementationOnce(() => {
-          return {
-            list: () => {
-              return Promise.resolve(bills);
-            },
-          };
-        });
-        expect(bills.length).toEqual(4);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ type: "Employee", email: "a@a" })
+      );
+      const root = document.createElement("div");
+      root.setAttribute("id", "root");
+      document.body.append(root);
+      router();
+      window.onNavigate(ROUTES_PATH.Bills);
+      await new Promise(process.nextTick);
+      const message = await screen.getByText(/Erreur 505/);
+      expect(message).toBeTruthy();
+    });
+  });
+  test("Then, it should them in the page", async () => {
+    localStorage.setItem(
+      "user",
+      JSON.stringify({ type: "Employee", email: "a@a" })
+    );
+    const root = document.createElement("div");
+    root.setAttribute("id", "root");
+    document.body.append(root);
+    router();
+    window.onNavigate(ROUTES_PATH.Bills);
 
-        expect(bills[0]).toHaveProperty("id", "47qAXb6fIm2zOKkLzMro");
-        expect(bills[0]).toHaveProperty("vat", "80");
-        expect(bills[0]).toHaveProperty(
-          "fileUrl",
-          "https://test.storage.tld/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a"
-        );
-        expect(bills[0]).toHaveProperty("status", "pending");
-        expect(bills[0]).toHaveProperty("type", "Hôtel et logement");
-        expect(bills[0]).toHaveProperty("commentary", "séminaire billed");
-        expect(bills[0]).toHaveProperty("name", "encore");
-        expect(bills[0]).toHaveProperty(
-          "fileName",
-          "preview-facture-free-201801-pdf-1.jpg"
-        );
-        expect(bills[0]).toHaveProperty("date", "2004-04-04");
-        expect(bills[0]).toHaveProperty("amount", 400);
-        expect(bills[0]).toHaveProperty("commentAdmin", "ok");
-        expect(bills[0]).toHaveProperty("email", "a@a");
-        expect(bills[0]).toHaveProperty("pct", 20);
+    await waitFor(() => screen.getByText("Mes notes de frais"));
+    expect(screen.getByText("Mes notes de frais")).toBeTruthy();
+    const buttonNewBill = screen.getByTestId("btn-new-bill");
+    expect(buttonNewBill).toBeTruthy();
+  });
+
+  describe("When fetches bills list is successul ", () => {
+    beforeEach(() => {
+      jest.spyOn(mockStore, "bills");
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
       });
+      window.localStorage.setItem(
+        "user",
+        JSON.stringify({
+          type: "Employee",
+          email: "a@a",
+        })
+      );
+      const root = document.createElement("div");
+      root.setAttribute("id", "root");
+      document.body.appendChild(root);
+      router();
+    });
+    test("Then, bills have an Properties", async () => {
+      mockStore.bills.mockImplementationOnce(() => {
+        return {
+          list: () => {
+            return Promise.resolve(bills);
+          },
+        };
+      });
+      expect(bills.length).toEqual(4);
+
+      expect(bills[0]).toHaveProperty("id", "47qAXb6fIm2zOKkLzMro");
+      expect(bills[0]).toHaveProperty("vat", "80");
+      expect(bills[0]).toHaveProperty(
+        "fileUrl",
+        "https://test.storage.tld/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a"
+      );
+      expect(bills[0]).toHaveProperty("status", "pending");
+      expect(bills[0]).toHaveProperty("type", "Hôtel et logement");
+      expect(bills[0]).toHaveProperty("commentary", "séminaire billed");
+      expect(bills[0]).toHaveProperty("name", "encore");
+      expect(bills[0]).toHaveProperty(
+        "fileName",
+        "preview-facture-free-201801-pdf-1.jpg"
+      );
+      expect(bills[0]).toHaveProperty("date", "2004-04-04");
+      expect(bills[0]).toHaveProperty("amount", 400);
+      expect(bills[0]).toHaveProperty("commentAdmin", "ok");
+      expect(bills[0]).toHaveProperty("email", "a@a");
+      expect(bills[0]).toHaveProperty("pct", 20);
     });
   });
 });
